@@ -1,0 +1,81 @@
+ ###3
+ export PS1='[\t \u@\H\W]' #○	Установить свое собственное приглашение в shell OD
+ ###4
+ ps aux|tee -a px.txt | grep $USER | grep -v grep | wc -l #Сколько процессов запущено вами (без учета процессов для решения этой задачи), список процессов сохранить в файл
+ ls -l ~ | grep ^- | wc -l #Сколько файлов в домашнем каталоге или find $HOME -maxdepth 1 -type f | wc -l
+ ls -l | sort -r #Вывести список файлов в реверсивном порядке
+ ls -l /dev |  grep ^d ; ls -l /dev | grep -v ^d | sed 1d	#Вывести список файлов с директориями в начале списка, без использования сортировки команды ls 
+ ###5
+ mkdir -p folder/nested #○	Создать одной командой каталог со вложенным каталогом
+ cp /var/log/messages /tmp/ #○	Скопировать любой файл логов во временную  папку
+ ln -s /etc/passwd /tmp/passwd #○	Создать мягкую ссылку на /etc/passwd
+ ln ~.alias . #○	Создать ссылку на файл в домашней папке.
+ ln -s ~ .      #○	Создать ссылку на домашнюю папку
+ cp -P /tmp/passwd . #Скопировать ссылку
+ ln -s /bin/ls /tmp/lists #	Создать ссылку на /bin/ls во временной папке со своим именем 
+ touch f;chmod ugo-rw f #○	Создать файл содержимое которого нельзя прочитать и в который нельзя записать
+ find /var/log/ -type f -newer /proc/$$/stat #Найти файлы обновленные в системе с момента вашего входа
+ ###6
+ usermod -G -a fuse $USER #Разрешить монтировать флешки текущему пользователю
+  mount -t tmpfs -o size=50M tmpfs /usr/share/nginx/html/folder/nested/ #Смонтировать временный диск (tmpfs). Записать данные , перемонтировать в режиме только чтения.
+  echo `ls -la` > /usr/share/nginx/html/folder/nested/file
+  mount -no remount,ro tmpfs
+  umout /dev/sdc1 #Размонтировать флешку
+  tar cjvf dir.tar.bz2 . --exclude=dir.tar.bz2 #Заархивировать папку
+  #Итоговое задание Основы
+  mkdir /tmp/My\ directory
+  cp -r /var/log/ /tmp/My\ directory/
+  tar cjvf log.tar.bz2 /tmp/My\ directory
+  tar xjvf log.tar.bz2  -C ~ --strip-components 2
+  rm /tmp/My\ directory/log/ -rf
+  ln -s ~ /tmp/My\ directory/
+  
+  ls -lR /etc/ | grep ^l #○	Найти все символические ссылки в каталоге /etc
+  find ./ -type d -newer /proc/$$/stat | wc -l	#○	Посчитать количество каталогов созданных вами в системе с момента регистрации
+  find /etc -user $USER -type f -size +1M | tar -T - -zcf x.tgz #○	Заархивировать все ваши файлы более 1Mb ОДНОЙ строкой
+  
+ ###7
+ trap "echo 'Привет!'" SIGINT #добавить и в .bashrc и сделать source #○	bash по нажатию Ctrl-C печатает “Привет”
+ #???	Сделать так чтобы gedit не уничтожался сигналом SIGHUP
+      #○	Как избавиться от зомби ?
+ #Найти родительский процесс и убить его
+ ###8
+ chmod 1305 access
+ ###9
+ find / -perm /u=s -type f  -exec cp {} /tmp/ \; #○	Найти все файлы с  установленным suid битом и скопировать их в каталог tmp
+ find /etc -user student -type f | xargs grep "student" #○	Вывести на экран строки из файлов содержащих слово student и созданных пользователем student.
+ ###10
+ diff -q directory-1/ directory-2/ #	Сравнить содержимое 2 каталогов
+ ###11
+#	Написать скрипт
+
+#!/bin/bash
+### echo "export file=file.txt" >> /etc/environment ### DO before run the script
+. /etc/environment
+echo $1
+function check_writable () {
+ if [ -w "$1" ]
+    then
+    return 0
+    else return 1
+ fi
+}
+check_writable $HOME/$file
+exit $? 
+
+#################
+#Найти битые ссылки
+find . -type l | while read link; do [ -e $(readlink $link) ] || echo $link; done
+???
+################ Утилита переименования всех файлов в каталоге 
+#!/bin/bash
+if [ -z "$1" -o -z "$2" ] ; then
+    echo "required 2 param"
+    exit 1
+else
+	for file in `ls | grep .$1`; do
+    	    mv "$file" "$(basename "$file" .$1).$2"
+        done
+fi
+################
+ls -l /proc/3971/exe #поиск файла по пид процесса
