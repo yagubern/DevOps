@@ -1,0 +1,385 @@
+﻿1. Создать алиас
+user@ubuntu:~/Desktop$ alias vc="uname -r"
+user@ubuntu:~/Desktop$ vc
+4.18.0-15-generic
+
+2. Установить свое приветствие
+user@ubuntu:~$ export PS1="\t \u \w Hello$"
+03:51:53 user ~ Hello$cd ..
+03:52:15 user /home Hello$cd ~
+03:52:35 user ~ Hello$nano .bashrc
+PS1="\t \u \w Hello$"
+
+3. Сколько процессов запущено под текущим пользователем. Сохранить в файл список.
+user@ubuntu:~$ ps -ux | grep -v "ps -ux" > ./Desktop/ps.txt
+user@ubuntu:~$ sed -i "1d" ./Desktop/ps.txt
+user@ubuntu:~$ wc -l ./Desktop/ps.txt
+62 ./Desktop/ps.txt
+
+4. Сколько файлов в домашнем каталоге
+user@ubuntu:~$ find .* * -maxdepth 0 -type f | wc -l
+11
+
+5. Отобразить список файлов в реверсивном порядке
+user@ubuntu:~$ find .* * -maxdepth 0 -type f | sort -r
+.xinputrc
+.sudo_as_admin_successful
+.profile
+.pam_environment
+.ICEauthority
+examples.desktop
+.bashrc.swp
+.bashrc.swo
+.bashrc
+.bash_logout
+.bash_history
+
+6. Список файлов с директориями в начале списка, без использования сортировки ls (на примере папки /dev)
+user@ubuntu:/dev$ find .* * -maxdepth 0 -type d && find .* * -maxdepth 0 -type f.
+..
+block
+bsg
+bus
+char
+cpu
+disk
+dri
+hugepages
+input
+lightnvm
+mapper
+mqueue
+net
+pts
+shm
+snd
+vfio
+
+Файлов в каталоге не оказалось, зато есть много блочных устройств, линков и т.д. 
+user@ubuntu:/dev$ find .* * -maxdepth 0 -type d && find .* * -maxdepth 0 -type c,b,l
+.
+..
+block
+bsg
+bus
+char
+cpu
+disk
+dri
+hugepages
+input
+lightnvm
+mapper
+mqueue
+net
+pts
+shm
+snd
+vfio
+agpgart
+autofs
+btrfs-control
+cdrom
+cdrw
+console
+core
+cpu_dma_latency
+cuse
+dmmidi
+dvd
+ecryptfs
+fb0
+fd
+fd0
+full
+fuse
+hidraw0
+hpet
+hwrng
+initctl
+kmsg
+kvm
+log
+loop0
+loop1
+loop10
+loop11
+loop12
+loop13
+loop14
+loop15
+loop2
+loop3
+loop4
+и т.д
+
+7. Создать одной командой каталог со вложенным каталогом
+mkdir -p Folder/2layerFolder
+Folder - это новая папка
+2layerFolder - вложенная папка
+
+8. Скопировать любой файл логов во временную папку
+user@ubuntu:~$ ls /var/log        
+alternatives.log    hp                   vmware-network.1.log
+alternatives.log.1  installer            vmware-network.2.log
+apt                 journal              vmware-network.3.log
+auth.log            kern.log             vmware-network.4.log
+auth.log.1          kern.log.1           vmware-network.5.log
+auth.log.2.gz       kern.log.2.gz        vmware-network.6.log
+bootstrap.log       lastlog              vmware-network.7.log
+btmp                speech-dispatcher    vmware-network.8.log
+btmp.1              syslog               vmware-network.log
+cups                syslog.1             vmware-vmsvc.1.log
+dist-upgrade        syslog.2.gz          vmware-vmsvc.2.log
+dpkg.log            syslog.3.gz          vmware-vmsvc.3.log
+dpkg.log.1          syslog.4.gz          vmware-vmsvc.log
+faillog             syslog.5.gz          wtmp
+fontconfig.log      tallylog             wtmp.1
+gdm3                unattended-upgrades
+gpu-manager.log     vmware
+user@ubuntu:~$ cp /var/log/alternatives.log /tmp
+user@ubuntu:~$ ls /tmp
+alternatives.log
+config-err-jcckhW
+lu2067t2u0dn.tmp
+OSL_PIPE_1000_SingleOfficeIPC_ebf4c14b10ff5047a7c52cb16b89cb45
+ssh-L0YF9JLMEPbb
+systemd-private-f096192fca774534a31446fc9219f927-bolt.service-jcVCEU
+systemd-private-f096192fca774534a31446fc9219f927-colord.service-TtlmLZ
+systemd-private-f096192fca774534a31446fc9219f927-fwupd.service-sczGV2
+systemd-private-f096192fca774534a31446fc9219f927-rtkit-daemon.service-jPCxFe
+systemd-private-f096192fca774534a31446fc9219f927-systemd-resolved.service-ks7aDG
+systemd-private-f096192fca774534a31446fc9219f927-systemd-timesyncd.service-DvdiWD
+tmpaddon
+VMwareDnD
+vmware-root_533-4282367668
+
+9. Создать мягкую ссылку на /etc/passwd
+user@ubuntu:~/Desktop$ ln -s /etc/passwd passwd
+
+10. Создать ссылку на файл в домашней папке
+user@ubuntu:~/Desktop$ ls -la ~
+...
+-rw-r--r--  1 user user  3806 апр 24 13:28 .bashrc
+user@ubuntu:~/Desktop$ ln -s ~/.bashrc bashrc
+
+11. Создать ссылку на домашнюю папку
+user@ubuntu:~/Desktop$ ln -s ~ homedir
+user@ubuntu:~/Desktop$ ls -la
+...
+lrwxrwxrwx  1 user user      10 мая 18 08:57  homedir -> /home/user
+
+12. Скопировать ссылку
+user@ubuntu:~/Desktop$ cp -P bashrc bashrc_copy
+user@ubuntu:~/Desktop$ ls -la
+...
+lrwxrwxrwx  1 user user      18 мая 18 09:07  bashrc -> /home/user/.bashrc
+lrwxrwxrwx  1 user user      18 мая 18 09:20  bashrc_copy -> /home/user/.bashrc
+
+13. Создать ссылку на /bin/ls во временной папке со своим именем
+user@ubuntu:~/Desktop$ ln -s /bin/ls Folder/ls
+user@ubuntu:~/Desktop$ ls -la Folder/
+...
+lrwxrwxrwx 1 user user    7 мая 18 09:26 ls -> /bin/ls
+
+14. Создать файл содержимое которого нельзя прочитать и в который нельзя записать
+user@ubuntu:~/Desktop$ touch file.txt && chmod 000 file.txt
+user@ubuntu:~/Desktop$ cat file.txt
+cat: file.txt: Отказано в доступе
+user@ubuntu:~/Desktop$ cp file.txt file_copy.txt
+cp: невозможно открыть 'file.txt' для чтения: Отказано в доступе
+
+15. Разрешить монтировать флешки текущему пользователю
+root@ubuntu:/home/user# nano /etc/fstab
+...
+/dev/sdb1 /media/user auto rw,users,noauto 0 0
+
+user@ubuntu:~$ reboot
+user@ubuntu:~$ mount /dev/sdb1 /media/user
+user@ubuntu:~$ df -h
+...
+/dev/sdb1         15G         5,3G  9,5G           36% /media/user
+
+16. Смонтировать флешку самостоятельно
+user@ubuntu:~$ mount /dev/sdb1 /media/user
+user@ubuntu:~$ lsblk
+...
+sdb      8:16   1  14,7G  0 disk 
+└─sdb1   8:17   1  14,7G  0 part /media/user
+
+17. Сделать текущим корневой каталог флешки
+user@ubuntu:~$ cd /media/user
+
+18. Создать файл и записать в него текст
+user@ubuntu:/media/user$ touch file.txt
+user@ubuntu:/media/user$ uname -r >> file.txt
+user@ubuntu:/media/user$ cat file.txt
+4.18.0-20-generic
+
+19. Перемонтировать в режиме только чтения
+user@ubuntu:/media/user$ umount /dev/sdb1
+root@ubuntu:/home/user# mount -o ro /dev/sdb1 /media/user
+root@ubuntu:/home/user# cd /media/user
+root@ubuntu:/media/user# nano file.txt 
+...
+123123123
+[ Ошибка записи file.txt: Файловая система доступна только для чтения ]
+
+20. Размонтировать флешку
+user@ubuntu:/media/user$ umount /dev/sdb1
+
+21. Создать запакованный bzip2 tar архив папки
+user@ubuntu:~/Desktop$ tar cvjf newtar.bz2 Folder
+Folder/
+Folder/2layerFolder/
+Folder/ls
+
+22. Обновить содержимое папки, Обновить архив
+user@ubuntu:~/Desktop$ touch Folder/newfile.txt
+user@ubuntu:~/Desktop$ tar uvf newtar.bz2 Folder
+tar: Не удаётся обновить сжатые архивы
+tar: Error is not recoverable: exiting now
+user@ubuntu:~/Desktop$ tar cvjf newtar.bz2 Folder
+Folder/
+Folder/newfile.txt
+Folder/2layerFolder/
+Folder/ls
+
+23. Удалить папку и восстановить её из архива
+user@ubuntu:~/Desktop$ rm -r Folder
+user@ubuntu:~/Desktop$ tar xvf newtar.bz2
+Folder/
+Folder/newfile.txt
+Folder/2layerFolder/
+Folder/ls
+
+24. Смонтировать временный диск (tmpfs). Записать данные , перемонтировать в режиме только чтения
+root@ubuntu:~# mount -t tmpfs -o size=600M tmpfs /media/user
+root@ubuntu:~# df -h
+Файл.система   Размер Использовано  Дост Использовано% Cмонтировано в
+...
+tmpfs            600M            0  600M            0% /media/user
+root@ubuntu:~# cd /media/user
+root@ubuntu:/media/user# touch file.txt
+root@ubuntu:/media/user# uname -r >> file.txt
+root@ubuntu:/media/user# mount -o remount,ro /media/user
+root@ubuntu:/media/user# touch fil2.txt
+touch: невозможно выполнить touch для 'fil2.txt': Файловая система доступна только для чтения
+
+25. Создать каталог My directory  во временной папке
+user@ubuntu:~$ mkdir -p tempdir/"My directory"
+user@ubuntu:~$ cd tempdir/My\ directory/
+
+26. Скопировать в этот каталог папку с логами системы
+user@ubuntu:~/tempdir/My directory$ cp -r /var/log .
+
+27. Заархивировать каталог логов используя bzip2 сжатие
+user@ubuntu:~/tempdir/My directory$ tar cvjf log.bz2 log
+
+28. Восстановить папку из архива в домашней папке
+user@ubuntu:~/tempdir/My directory$ tar xvf log.bz2 -C ~
+
+29. Удалить каталог с логами из My directory
+user@ubuntu:~/tempdir/My directory$ rm -r log
+
+30. Создать ссылку на домашнюю папку в My directory
+user@ubuntu:~/tempdir/My directory$ ln -s ~ homedir
+
+31. Изменить количество жёстких ссылок  на каталог My directory
+
+
+
+32. Найти все символические ссылки в каталоге /etc
+user@ubuntu:~/tempdir$ find /etc -type l
+
+33. Посчитать количество каталогов созданных вами в системе с момента регистрации
+
+
+
+34. Заархивировать все ваши файлы более 1Mb ОДНОЙ строкой
+user@ubuntu:~/Desktop$ find /home/user -size +1M | tar cjf 1Mfiles.bz2 -T -
+
+35. Запустить gedit. Остановить/заморозить процесс, продолжить выполнение
+user@ubuntu:~/Desktop$ gedit
+user@ubuntu:~/Desktop$ ps -u
+...
+user       2905  0.2  1.3 688188 56068 tty2     Sl+  17:39   0:11 gedit /home/us
+user@ubuntu:~/Desktop$ kill -STOP 2905
+user@ubuntu:~/Desktop$ kill -CONT 2905
+
+36. bash по нажатию Ctrl-C печатает “Привет”
+user@ubuntu:~/Desktop$ trap "echo 'Привет'" SIGINT
+user@ubuntu:~/Desktop$ ^CПривет
+
+37. Сделать так чтобы gedit не уничтожался сигналом SIGHUP
+
+
+38. Как избавиться от зомби ?
+user@ubuntu:~/Desktop$ setsid bash -c 'sleep 10 & kill -STOP $$'
+user@ubuntu:~/Desktop$ ps xal | grep -w Z
+0  1000   3437   3436  20   0      0     0 -      Z    ?          0:00 [sleep] <defunct>
+user@ubuntu:~/Desktop$ kill -9 3436
+
+39. Создать нового пользователя (su). Зайти им в систему
+root@ubuntu:~# useradd -m vasya
+root@ubuntu:~# passwd vasya
+Введите новый пароль UNIX: 
+Повторите ввод нового пароля UNIX: 
+passwd: пароль успешно обновлён
+
+40. root@ubuntu:~# groupadd newgroup
+root@ubuntu:~# usermod -aG newgroup vasya
+root@ubuntu:~# usermod -aG newgroup student
+
+41. Установить права на -wx--xr-t 2 способами
+root@ubuntu:~# chmod 1314 file
+root@ubuntu:~# ls -l
+итого 0
+--wx--xr-T 1 root root 0 мая 19 21:11 file
+root@ubuntu:~# chmod u=wx,g=x,o=r+t file
+root@ubuntu:~# ls -l
+итого 0
+--wx--xr-T 1 root root 0 мая 19 21:11 file
+
+42. Создать файл и установить на него права таким образом, чтобы владелец (пользователь vasya) мог запускать,читать и записывать  файл, пользователь petya и sergio , могли только читать файл, все другие пользователи никаких прав не имели. На файл установлен SGUID и Sticky биты
+user@ubuntu:~$ chmod 4640 file.t xt
+user@ubuntu:~$ chmod +t file.txt
+user@ubuntu:~$ ls -l
+-rwSr----T  1 user user    0 мая 19 04:42 file.txt
+
+43. Сделать так чтобы вновь создаваемые файлы имели права r--rw--w-
+umask 315
+
+44. Разрешить новому пользователю добавлять новых пользователей (sudo)
+nano /etc/sudoers
+...
+user ALL=NOPASSWD:/home, /etc/default/useradd
+
+45. Найти все файлы с  установленным suid битом и скопировать их в каталог /tmp
+find / -perm -2000 -exec cp -r {} /tmp \;
+
+46.Вывести на экран строки из файлов содержащих слово student и созданных пользователем student
+grep -iRi 'user' /home/user/
+ 
+47. Сравнить содержимое 2 каталогов
+user@ubuntu:~$ diff Folder/ folder1/
+Только в Folder/: 2layerFolder
+Только в folder1/: file1.txt
+Только в folder1/: file2.txt
+Только в Folder/: ls
+Только в Folder/: newfile.txt
+
+48. Написать скрипт
+#!/bin/bash
+file=$HOME/file.txt
+echo $1
+function check_writable () {
+ if [ -w "$file" ]
+    then
+    echo $1 >> $file
+    return 0
+    else return 1
+ fi
+}
+check_writable $1 $file
+exit $?
