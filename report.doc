@@ -1,0 +1,158 @@
+user@ubuntu:~/Desktop$ alias vc="uname -r"
+user@ubuntu:~/Desktop$ vc
+4.18.0-15-generic
+
+how much process?
+user@ubuntu:~$ ps -ux | grep -v "ps -ux" > ./Desktop/ps.txt
+user@ubuntu:~$ sed -i "1d" ./Desktop/ps.txt
+user@ubuntu:~$ wc -l ./Desktop/ps.txt
+62 ./Desktop/ps.txt
+
+how many files in hime directory
+user@ubuntu:~$ find .* * -maxdepth 0 -type f | wc -l
+
+user@ubuntu:/dev$ find .* * -maxdepth 0 -type d && find .* * -maxdepth 0 -type f.
+ 
+user@ubuntu:/dev$ find .* * -maxdepth 0 -type d && find .* * -maxdepth 0 -type c,b,l
+
+mkdir -p folder/2layers
+
+create Symbolic link
+user@ubuntu:~/Desktop$ ln -s /etc/passwd passwd
+
+create link on file in home directory
+user@ubuntu:~/Desktop$ ls -la ~
+...
+-rw-r--r--  1 user user  3806 апр 24 13:28 .bashrc
+user@ubuntu:~/Desktop$ ln -s ~/.bashrc bashrc
+
+create link on home directory
+user@ubuntu:~/Desktop$ ln -s ~ homedir
+user@ubuntu:~/Desktop$ ls -la
+...
+lrwxrwxrwx  1 user user      10 мая 18 08:57  homedir -> /home/user
+
+copy
+user@ubuntu:~/Desktop$ cp -P bashrc bashrc_copy
+user@ubuntu:~/Desktop$ ls -la
+...
+lrwxrwxrwx  1 user user      15 мая 19 00:40  bashrc -> /home/user/.bashrc
+lrwxrwxrwx  1 user user      15 мая 19 00:41  bashrc_copy -> /home/user/.bashrc
+
+
+##
+user@ubuntu:~/Desktop$ ln -s /bin/ls folder/ls
+user@ubuntu:~/Desktop$ ls -la folder/
+...
+lrwxrwxrwx 1 user user    15 мая 19 00:26 ls -> /bin/ls
+
+14. Создать файл содержимое которого нельзя прочитать и в который нельзя записать
+user@ubuntu:~/Desktop$ touch file.txt && chmod 000 file.txt
+user@ubuntu:~/Desktop$ cat file.txt
+cat: file.txt: Отказано в доступе
+user@ubuntu:~/Desktop$ cp file.txt file_copy.txt
+cp: невозможно открыть 'file.txt' для чтения: Отказано в доступе
+
+Mount the USB flash drive 
+user@ubuntu:~$ mount /dev/sdb1 /media/user
+user@ubuntu:~$ lsblk
+...
+sdb      8:16   1  14,7G  0 disk 
+└─sdb1   8:17   1  14,7G  0 part /media/user
+
+Make current root directory flash drives
+user@ubuntu:~$ cd /media/user
+
+create file and white
+user@ubuntu:/media/user$ touch file.txt
+user@ubuntu:/media/user$ uname -r >> file.txt
+user@ubuntu:/media/user$ cat file.txt
+4.18.0-20-generic
+
+19. Перемонтировать в режиме только чтения
+user@ubuntu:/media/user$ umount /dev/sdb1
+root@ubuntu:/home/user# mount -o ro /dev/sdb1 /media/user
+root@ubuntu:/home/user# cd /media/user
+root@ubuntu:/media/user# nano file.txt 
+...
+123123123
+[ Ошибка записи file.txt: Файловая система доступна только для чтения ]
+
+Unmount a USB flash drive
+user@ubuntu:/media/user$ umount /dev/sdb1
+
+create bzip2 tar 
+user@ubuntu:~/Desktop$ tar cvjf newtar.bz2 folder
+folder/
+folder/2layers/
+folder/ls
+
+Delete the folder and restore it from the archive
+user@ubuntu:~/Desktop$ rm -r fold
+user@ubuntu:~/Desktop$ tar xvf newtar.bz2
+fold/
+fold/newfile.txt
+fold/2layers/
+fold/ls
+
+create directory in the temporary folder
+user@ubuntu:~$ mkdir -p tempdir/"My directory"
+user@ubuntu:~$ cd tempdir/My\ directory/
+
+copy
+user@ubuntu:~/tempdir/directory$ cp -r /var/log .
+
+arxivate bzip2 
+user@ubuntu:~/tempdir/directory$ tar cvjf log.bz2 log
+
+Restore folder from archive 
+user@ubuntu:~/tempdir/directory$ tar xvf log.bz2 -C ~
+
+delete directory
+user@ubuntu:~/tempdir/directory$ rm -r log
+
+new directory
+user@ubuntu:~/tempdir/directory$ ln -s ~ homedir
+
+symbolic links
+user@ubuntu:~/tempdir$ find /etc -type l
+
+arxivate
+user@ubuntu:~/Desktop$ find /home/user -size +1M | tar cjf 1Mfiles.bz2 -T -
+
+gedit. stop process, continue 
+user@ubuntu:~/Desktop$ gedit
+user@ubuntu:~/Desktop$ ps -u
+...
+user       2001  0.2  1.3 688188 56068 tty2     Sl+  15:25   0:20 gedit /home/us
+user@ubuntu:~/Desktop$ kill -STOP 2001
+user@ubuntu:~/Desktop$ kill -CONT 2001
+
+print “Hello”
+user@ubuntu:~/Desktop$ trap "echo 'Hello'" SIGINT
+user@ubuntu:~/Desktop$ ^CHello
+
+
+create new users
+
+root@ubuntu:~# useradd -m vasya
+root@ubuntu:~# passwd vasya
+Введите новый пароль UNIX: 
+Повторите ввод нового пароля UNIX: 
+passwd: пароль успешно обновлён
+
+(sudo)
+nano /etc/sudoers
+...
+user ALL=NOPASSWD:/home, /etc/default/useradd
+
+the rights to -wx--xr-t 
+
+root@ubuntu:~# chmod u=wx,g=x,o=r+t file
+root@ubuntu:~# ls -l
+итого 0
+--wx--xr-T 1 root root 0 мая 19 21:11 file
+
+new files have rights: r--rw--w-
+umask 315
+
